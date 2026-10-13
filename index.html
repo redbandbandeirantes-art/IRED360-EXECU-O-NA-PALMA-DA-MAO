@@ -244,6 +244,59 @@ textarea{width:100%;resize:vertical}
   tr{break-inside:avoid}
   .logo{width:46px}
 }
+
+/* ---- Celular: filtros sem trava, abas em faixa rolável e Antes e Depois em cartões ---- */
+@media screen and (max-width:640px){
+  .filters{position:static}
+  .tabs{flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-block:10px 12px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs>*{flex:0 0 auto;white-space:nowrap}
+  .adform{padding:12px}
+  .adform .adname{font-size:24px}
+  .adform .adorient{display:none}
+  .adform .inline.noprint{gap:6px}
+  .adform .inline.noprint .btn{padding:6px 10px;font-size:13px}
+  .adform .tw{overflow:visible}
+  .adsc{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--bg);padding-block:6px;margin-inline:-4px;padding-inline:4px}
+  .adsc .tile{padding:8px 10px;min-width:0}
+  .adsc .tile .v{font-size:24px;line-height:1.1}
+  .adsc .tile .meta{display:none}
+  .adsc .tile .k{font-size:11px}
+  .adt{display:block;width:100%;font-size:14px}
+  .adt thead{display:none}
+  .adt tbody{display:block}
+  .adt tr{display:grid}
+  .adt td{border:0;padding:0;min-width:0!important;white-space:normal!important}
+  .adt tr.adpilh{grid-template-columns:1fr;margin-top:16px;border-radius:8px 8px 0 0;overflow:hidden}
+  .adt tr.adpilh td{padding:10px 12px}
+  .adt tr.adpilh td.adh{display:none}
+  .adt tr.aditem{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-areas:"code code tipo tipo pts pts" "desc desc desc desc desc desc" "cen cen cen cen cen cen" "a a a d d d";gap:6px 8px;padding:12px;background:var(--surface);border:1px solid var(--line);border-top:0}
+  .adt td.qc{grid-area:code;font-size:12px;color:var(--fg-2)}
+  .adt td.qt{grid-area:tipo;text-align:center;font-size:12px}
+  .adt td.qp{grid-area:pts;text-align:right;font-size:12px;color:var(--fg-2)}
+  .adt td.qp::before{content:"vale ";font-weight:400}
+  .adt td.qm{grid-area:desc;font-size:15px;line-height:1.35;font-weight:600}
+  .adt td.qcen{grid-area:cen;font-size:13px;color:var(--fg-2)}
+  .adt td.adc{text-align:left}
+  .adt tr.aditem td.adc:nth-of-type(6){grid-area:a}
+  .adt tr.aditem td.adc:nth-of-type(7){grid-area:d}
+  .adt td[data-l]::before{content:attr(data-l);display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-3);margin-bottom:3px}
+  .adt .tg2{width:100%;min-width:0;height:46px;font-size:15px;border-radius:8px}
+  .adt tr.skrow{grid-template-columns:minmax(0,1fr) 64px 64px;gap:8px;align-items:center;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-top:1px dashed var(--line)}
+  .adt tr.skrow td.skx{display:none}
+  .adt tr.skrow td.skd{font-size:13px}
+  .adt tr.skrow td.skc{text-align:center}
+  .adt tr.skrow td.skc::before{text-align:center}
+  .adt .skchk input{width:26px;height:26px}
+  .adt tr.rsub,.adt tr.rtot{grid-template-columns:minmax(0,1fr) repeat(3,auto);gap:4px 14px;align-items:end;padding:10px 12px;background:var(--surface-2);border:1px solid var(--line);border-top:0}
+  .adt tr.rsub{border-radius:0 0 8px 8px}
+  .adt tr.rtot{margin-top:16px;border-radius:8px;border-top:1px solid var(--line)}
+  .adt tr.rsub td,.adt tr.rtot td{text-align:right;border:0!important;background:transparent!important;box-shadow:none!important}
+  .adform .inline .f{flex:1 1 100%}
+  .adform .inline .f input,.adform textarea{width:100%;box-sizing:border-box}
+  .adt tr.rsub td.tl,.adt tr.rtot td.tl{text-align:left!important;align-self:center;font-weight:700}
+  .adform .sign{grid-template-columns:1fr;gap:28px}
+}
 </style>
 
 <div class="wrap">
@@ -815,7 +868,7 @@ function adInfo(pv){const b=BASEI[pv];const ri=adLastRow(0,pv)??adLastRow(1,pv);
   return{pv,nome,c:b?b.c:PM.c[ri],ger:b?b.ger:rk.ger,sup:b?b.sup:rk.sup,rota:b?b.rota:rk.rota,geo:geoOf(pv)}}
 function visListHTML(){const v=Object.values(VIS).filter(x=>x.vis&&(!S.ger||x.ger===S.ger)&&(!S.sup||x.sup===S.sup)&&(!S.rota||x.rota===S.rota)&&(S.canal===''||x.canal===C[+S.canal])).sort((a,b)=>b.ts-a.ts);
   return`<h3 style="margin-top:8px">Visitas registradas em ${MESF[+VMES.slice(5)]} · ${esc(scopeName())} <span class="pill ${v.length?'good':'mute'}">${v.length}</span></h3>
-  ${VSHARED?'':'<p class="small">Sem conexão com o registro compartilhado: aparecem só as visitas feitas neste aparelho.</p>'}
+  ${VSHARED?'':'<p class="small">Sem conexão com o registro compartilhado: aparecem só as visitas feitas neste aparelho.'+(VERR?' Motivo: '+esc(VERR):'')+'</p>'}
   ${v.length?`<div class="tw"><table><thead><tr><th>Cliente</th><th>Rota</th><th>Data</th><th>Responsável</th><th class="n">Antes</th><th class="n">Depois</th><th class="n">Ganho</th></tr></thead><tbody>${v.map(x=>`<tr class="click" data-ad="${esc(x.pv)}"><td><b>${esc(x.nome)}</b><div class="small num">${x.pv} · ${esc(x.canal)}</div></td><td class="small">${esc(x.rota)}<div>${esc(x.sup)}</div></td><td class="small">${new Date(x.ts).toLocaleDateString('pt-BR')}</td><td class="small">${esc(x.res||'–')}</td><td class="n">${x.antes==null?'–':fmt(x.antes,1)}</td><td class="n">${x.depois==null?'–':fmt(x.depois,1)}</td><td class="n">${x.ganho==null?'–':`<span class="${x.ganho>=0?'up':'dn'}">${x.ganho>=0?'+':''}${fmt(x.ganho,1)}</span>`}</td></tr>`).join('')}</tbody></table></div>`:'<p class="note">Nenhuma visita registrada neste escopo ainda. A visita é registrada quando o consultor preenche o Depois ou liga a chave no formulário do cliente.</p>'}`}
 function openAD(pv){pushH();S.adPv=pv;S.adSh='';S.tab='ad';try{if(!pv.startsWith('blank:'))history.replaceState(null,'','#ad='+pv)}catch(e){}render();window.scrollTo(0,0)}
 function adLink(pv){return location.href.split('#')[0]+'#ad='+pv+(S.adT===1?'&t=RED':'')}
@@ -842,29 +895,41 @@ function loadScript(src){return new Promise((res,rej)=>{const ex=document.queryS
 const lat1=s=>String(s==null?'':s).normalize('NFC').replace(/[–—]/g,'-').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[^\x00-\xFF]/g,'');
 // ----- Visitas (registro compartilhado) -----
 const VMES=(()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')})();
-const VIS={};let VDB=null,VSHARED=false;
-function visMeta(st){if(!st.vis)return VDB?'Ligue a chave ao visitar o cliente: a liderança passa a ver a visita no painel.':'Ligue a chave ao visitar o cliente.';const d=new Date(st.visTs||Date.now());return`${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}${st.res?' · '+st.res:''}${VSHARED?' · visível para a liderança':' · salvo só neste aparelho'}`}
+const VIS={};let VDB=null,VSHARED=false,VERR='';
+function visMeta(st){if(!st.vis)return VDB?'Ligue a chave ao visitar o cliente: a liderança passa a ver a visita no painel.':'Ligue a chave ao visitar o cliente.';const d=new Date(st.visTs||Date.now());return`${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}${st.res?' · '+st.res:''}${VSHARED?' · visível para a liderança':' · salvo só neste aparelho'+(VERR?' ('+esc(VERR)+')':'')}`}
 function visLocal(){try{const s=localStorage.getItem('visitas:'+VMES);if(s)Object.assign(VIS,JSON.parse(s))}catch(e){}}
 function visWrite(info,sh,st,TT){const doc={pv:info.pv,nome:info.nome,ger:info.ger||'',sup:info.sup||'',rota:info.rota||'',canal:C[info.c],form:sh,mes:VMES,vis:st.vis?1:0,ts:st.visTs||Date.now(),upd:Date.now(),res:st.res||'',data:st.data||'',antes:TT.nA?TT.A:null,depois:TT.nD?TT.Pr:null,ganho:TT.nD?TT.Pr-TT.A:null,pts:TT.P,st:JSON.parse(JSON.stringify(st))};
   VIS[info.pv]=doc;try{localStorage.setItem('visitas:'+VMES,JSON.stringify(VIS))}catch(e){}
-  if(VDB){VDB.from('visitas').upsert(Object.assign({id:info.pv+'_'+VMES.replace('-','')},doc),{onConflict:'id'}).then(({error})=>{if(error){console.error('Supabase:',error);VSHARED=false;toast('Não foi possível salvar no Supabase: a visita ficou salva só neste aparelho.')}else if(!VSHARED){VSHARED=true}})}}
+  if(VDB){VDB.from('visitas').upsert(Object.assign({id:info.pv+'_'+VMES.replace('-','')},doc),{onConflict:'id'}).then(({error})=>{if(error){console.error('Supabase:',error);VSHARED=false;VERR=sbErr(error);toast('Não salvou no Supabase: '+VERR)}else{VSHARED=true;VERR=''}})}}
 visLocal();
 // ----- Supabase: preencha com os dados do seu projeto (Project Settings > API) -----
-const SUPABASE_URL='COLE_AQUI_A_PROJECT_URL';   // ex.: https://abcdefghijkl.supabase.co
-const SUPABASE_KEY='COLE_AQUI_A_CHAVE_ANON';    // chave "anon public" ou "publishable"
+const SUPABASE_URL='https://yvweqpydwxhtziepemhi.supabase.co';   // ex.: https://abcdefghijkl.supabase.co
+const SUPABASE_KEY='sb_publishable_I1Pnft0na_kVQ4-3N1DM-g_vBwG3yAd';    // chave "anon public" ou "publishable"
 const SUPABASE_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js';
+function sbErr(e){const m=String((e&&(e.message||e.msg||e.hint))||e||''),c=String((e&&e.code)||'');
+  if(/Failed to fetch|NetworkError|Load failed|ERR_NAME/i.test(m))return'não encontrou o servidor: confira a Project URL';
+  if(/Invalid API key|JWT|apikey|No API key|401/i.test(m+c))return'chave inválida: use a chave anon public ou publishable';
+  if(c==='42P01'||c==='PGRST205'||/does not exist|schema cache|Could not find the table/i.test(m))return'a tabela visitas não existe: rode o supabase_setup.sql no SQL Editor';
+  if(c==='42501'||/row-level security|permission denied/i.test(m))return'sem permissão na tabela: rode o supabase_setup.sql de novo';
+  if(c==='PGRST204'||/column/i.test(m))return'a tabela visitas está com colunas diferentes: rode o supabase_setup.sql';
+  return m||'erro desconhecido'}
 function visApply(rows){for(const k in VIS)delete VIS[k];(rows||[]).forEach(x=>{if(x&&x.pv)VIS[x.pv]=x});if(S.tab!=='ad'||!S.adPv)render()}
-async function visPull(){const{data,error}=await VDB.from('visitas').select('*').eq('mes',VMES);if(error)throw error;VSHARED=true;visApply(data)}
-if(/^https:\/\//.test(SUPABASE_URL)&&!/COLE_AQUI/.test(SUPABASE_KEY)){
+async function visPull(){const{data,error}=await VDB.from('visitas').select('*').eq('mes',VMES);if(error)throw error;VSHARED=true;VERR='';visApply(data)}
+const SB_URL=String(SUPABASE_URL).trim().replace(/\/(rest|auth|realtime)\/v1.*$/i,'').replace(/\/+$/,''),SB_KEY=String(SUPABASE_KEY).trim();
+function sbFail(msg){VSHARED=false;VERR=msg;console.error('Supabase: '+msg);toast('Supabase: '+msg);setTimeout(()=>toast('Supabase: '+msg),4000);render()}
+if(/COLE_AQUI/.test(SB_URL+SB_KEY)||!SB_URL||!SB_KEY)setTimeout(()=>sbFail('falta colar a URL e a chave no index.html'),800);
+else if(!/^https:\/\/[^\/]+$/.test(SB_URL))setTimeout(()=>sbFail('a Project URL deve ser como https://xxxx.supabase.co'),800);
+else if(/^sb_secret_/.test(SB_KEY))setTimeout(()=>sbFail('essa é a chave secreta: use a anon public ou publishable'),800);
+else{
   loadScript(SUPABASE_JS).then(async()=>{
-    VDB=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}});
-    try{await visPull()}catch(e){console.error('Supabase:',e);VSHARED=false;render();return}
+    VDB=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:false}});
+    try{await visPull();console.info('Supabase conectado: '+Object.keys(VIS).length+' respostas de '+VMES)}catch(e){VDB=null;sbFail(sbErr(e));return}
     VDB.channel('visitas-'+VMES).on('postgres_changes',{event:'*',schema:'public',table:'visitas',filter:'mes=eq.'+VMES},p=>{
       if(p.eventType==='DELETE'){const o=p.old||{};for(const k in VIS)if(VIS[k].id===o.id)delete VIS[k]}
       else if(p.new&&p.new.pv)VIS[p.new.pv]=p.new;
       if(S.tab!=='ad'||!S.adPv)render()}).subscribe();
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)visPull().catch(()=>{})});
-  }).catch(e=>{console.error('Supabase:',e);VSHARED=false});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&VDB)visPull().catch(()=>{})});
+  }).catch(()=>sbFail('não carregou a biblioteca do Supabase (sem internet ou bloqueio de rede)'));
 }
 const visBadge=pv=>VIS[pv]&&VIS[pv].vis?`<span class="vbadge" title="Visita registrada em ${new Date(VIS[pv].ts).toLocaleDateString('pt-BR')}${VIS[pv].res?' por '+esc(VIS[pv].res):''}">✓ Visitado ${new Date(VIS[pv].ts).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</span>`:'';
 // ----- Formulário oficial Antes e Depois (Band 2026 V2) -----
@@ -900,14 +965,14 @@ function renderADForm(el){
   const notesHTML=()=>[[1,'RED'],[0,'ICE']].map(([t,l])=>{const r=two(t);return`<div><span class="small">${l}</span><div class="nt2">${r.length?r.map((i,k)=>`<span class="${k?'prev':''}"><b>${fmt(PM.real[i]/PM.poss[i]*100)}</b> <span class="small">${MESN[PM.m[i]]}</span></span>`).join(''):'<span class="small">sem pesquisa</span>'}</div></div>`}).join('');
   const tgL=(v,x)=>v==null||v===''?['','Marcar']:+v>0?['on','✓ '+fmt(x.p,x.p%1?1:0)]:['off','✗ 0'];
   const cell=(col,x)=>{const v=st[col][x.id];const[c,l]=tgL(v,x);
-    return`<td class="n adc"><button type="button" class="tg2 ${c}" data-tg="${col}|${x.id}" aria-label="${col==='a'?'Antes':'Depois'} ${esc(x.c)}" title="Clique para alternar: executado (pontuação total) ou não executado (zero)">${l}</button></td>`};
-  const skc=(col,x,i)=>{const k=col+'|'+x.id+'|'+i;return`<td class="n"><label class="skchk"><input type="checkbox" data-sk="${k}"${st.sk[k]?' checked':''}><span class="sr">${col==='a'?'Antes':'Depois'}</span></label></td>`};
+    return`<td class="n adc" data-l="${col==='a'?'Antes':'Depois'}"><button type="button" class="tg2 ${c}" data-tg="${col}|${x.id}" aria-label="${col==='a'?'Antes':'Depois'} ${esc(x.c)}" title="Clique para alternar: executado (pontuação total) ou não executado (zero)">${l}</button></td>`};
+  const skc=(col,x,i)=>{const k=col+'|'+x.id+'|'+i;return`<td class="n skc" data-l="${col==='a'?'Antes':'Depois'}"><label class="skchk"><input type="checkbox" data-sk="${k}"${st.sk[k]?' checked':''}><span class="sr">${col==='a'?'Antes':'Depois'}</span></label></td>`};
   let body='';
   f.pil.forEach((p,pi)=>{const its=items.filter(x=>x.pi===pi);
-    body+=`<tr class="adpilh"><td colspan="4">${esc(p.n)}</td><td class="n">Pontos</td><td class="n">Antes</td><td class="n">Depois</td></tr>`;
-    its.forEach(x=>{body+=`<tr><td class="qc" style="white-space:nowrap"><b>${esc(x.c)}</b></td><td>${esc(x.m)}</td><td class="small">${esc(x.t)}</td><td class="small" style="min-width:160px">${esc(x.cen)}</td><td class="n"><b>${fmt(x.p,x.p%1?1:0)}</b></td>${cell('a',x)}${cell('d',x)}</tr>`;
-      x.sku.forEach((s,i)=>{body+=`<tr class="skrow"><td></td><td colspan="3"><span class="skdot"></span>${esc(s)}</td><td class="n small">–</td>${skc('a',x,i)}${skc('d',x,i)}</tr>`})});
-    body+=`<tr class="rsub"><td colspan="4" style="text-align:right">TT Pilar</td><td class="n" id="adP${pi}"></td><td class="n" id="adA${pi}"></td><td class="n" id="adD${pi}"></td></tr>`});
+    body+=`<tr class="adpilh"><td colspan="4">${esc(p.n)}</td><td class="n adh">Pontos</td><td class="n adh">Antes</td><td class="n adh">Depois</td></tr>`;
+    its.forEach(x=>{body+=`<tr class="aditem"><td class="qc" style="white-space:nowrap"><b>${esc(x.c)}</b></td><td class="qm">${esc(x.m)}</td><td class="small qt">${esc(x.t)}</td><td class="small qcen" style="min-width:160px">${esc(x.cen)}</td><td class="n qp"><b>${fmt(x.p,x.p%1?1:0)}</b></td>${cell('a',x)}${cell('d',x)}</tr>`;
+      x.sku.forEach((s,i)=>{body+=`<tr class="skrow"><td class="skx"></td><td colspan="3" class="skd"><span class="skdot"></span>${esc(s)}</td><td class="n small skx">–</td>${skc('a',x,i)}${skc('d',x,i)}</tr>`})});
+    body+=`<tr class="rsub"><td colspan="4" class="tl" style="text-align:right">TT Pilar</td><td class="n" data-l="Pontos" id="adP${pi}"></td><td class="n" data-l="Antes" id="adA${pi}"></td><td class="n" data-l="Depois" id="adD${pi}"></td></tr>`});
   el.innerHTML=`<div class="panel adform">
     <div class="adhead">
       <div><div class="cvtitle" style="text-align:left">${esc(f.nome)}</div>
@@ -933,7 +998,7 @@ function renderADForm(el){
       <span class="small">${info?(st.src?`Antes preenchido com a pesquisa ${esc(st.src)} (${st.hit} de ${items.length} itens encontrados; os demais ficam para preencher na loja).`:'Cliente sem pesquisa RED: preencha o Antes na loja.'):''} Itens sem Depois mantêm o valor do Antes no resultado projetado. Nas combinadas, marcar todos os SKUs dá a pontuação cheia.</span>
     </div>
     <div class="tw"><table class="xl adt"><thead><tr><th>Item</th><th>Métrica</th><th></th><th>Cenários</th><th class="n">Pontos</th><th class="n">Antes</th><th class="n">Depois</th></tr></thead><tbody>${body}
-      <tr class="rtot"><td colspan="4" style="text-align:right">Pontuação Final</td><td class="n" id="adPT"></td><td class="n" id="adAT"></td><td class="n" id="adDT"></td></tr></tbody></table></div>
+      <tr class="rtot"><td colspan="4" class="tl" style="text-align:right">Pontuação Final</td><td class="n" data-l="Pontos" id="adPT"></td><td class="n" data-l="Antes" id="adAT"></td><td class="n" data-l="Depois" id="adDT"></td></tr></tbody></table></div>
     ${f.nota?`<p class="small">${esc(f.nota)}</p>`:''}
     <div class="f"><label for="adObs">Estratégia combinada com o cliente</label><textarea id="adObs" rows="3" placeholder="O que foi acordado, prazos, materiais necessários">${esc(st.obs||'')}</textarea></div>
     <div class="sign"><div>Consultor</div><div>Supervisor</div><div>Cliente</div></div>
@@ -1026,7 +1091,7 @@ function renderVisitas(){
   </div>
   <div class="panel" style="margin-top:16px"><header><h3>Visitas por ${lvl?LN[lvl]:'rota'} · ${mesN} · ${esc(scopeName())}</h3></header>
     <p class="note">Uma visita conta quando o consultor liga a chave ou marca o Depois no Antes e Depois do cliente. "Cobertura" compara os clientes visitados com os PDVs Prioridade 1 da pesquisa do mês no mesmo grupo. ${lvl?'Clique numa linha para abrir o nível seguinte.':''}</p>
-    ${VSHARED?'':'<p class="small">Sem conexão com o registro compartilhado: aparecem só as visitas feitas neste aparelho.</p>'}
+    ${VSHARED?'':'<p class="small">Sem conexão com o registro compartilhado: aparecem só as visitas feitas neste aparelho.'+(VERR?' Motivo: '+esc(VERR):'')+'</p>'}
     <div class="tw"><table><thead><tr><th>${lvl?LN[lvl]:'Grupo'}</th><th class="n">Visitas</th><th class="n">Antes médio</th><th class="n">Depois médio</th><th class="n">Ganho médio</th><th class="n">Com ganho</th><th class="n">P1 visitados</th><th class="n">Cobertura P1</th><th class="n">Última</th></tr></thead><tbody>${body}</tbody></table></div></div>
   <div class="panel" style="margin-top:16px">${visListHTML()}</div>`;
   document.querySelectorAll('[data-vdrill]').forEach(r=>r.onclick=()=>drill(lvl,r.dataset.vdrill));bindAD();
