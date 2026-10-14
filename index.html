@@ -221,6 +221,10 @@ textarea{width:100%;resize:vertical}
 .rn select{min-width:70px}
 .arrow{font-size:.6em;color:var(--fg-3);margin:0 6px}
 
+.req{color:var(--crit);font-weight:700;text-transform:none;letter-spacing:0;margin-left:4px}
+input.err{border-color:var(--crit)!important;box-shadow:0 0 0 2px var(--crit-bg)}
+.reqmsg{color:var(--crit);display:block;margin-top:3px}
+.adbot{justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .wkbar{display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;margin-top:8px}
 .chip.now{border-color:var(--ice)}
 .nowtag{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--ice);color:#fff;border-radius:999px;padding:1px 6px;margin-left:2px}
@@ -1088,7 +1092,8 @@ function renderClientes(){
   rows.sort((a,b)=>b.imp-a.imp);const tot=rows.reduce((s,r)=>s+r.imp,0);
   $('tab-clientes').innerHTML=`<div class="panel">
     <header><h3>Clientes ${TN[t]} para atacar · ${esc(scopeName())} · ${MESN[m]}</h3></header>
-    <div class="chips"><span class="pill mute">${rows.length} PDVs</span><span class="pill crit">${rows.filter(r=>r.nota<70).length} abaixo de 70</span><span class="pill warn">${rows.filter(r=>r.prev!=null&&r.nota-r.prev<=-10).length} caíram 10+ pts no mês</span></div>
+    <p class="small">Somente clientes já pesquisados no ${TN[t]} em ${MESF[m]}${m===PARC?' (pesquisas até '+(t===0?D.upd.ice:D.upd.red)+')':''}. Quem ainda não foi pesquisado no mês aparece na aba Pesquisas mês atual.</p>
+    <div class="chips"><span class="pill mute">${rows.length} PDVs pesquisados</span><span class="pill crit">${rows.filter(r=>r.nota<70).length} abaixo de 70</span><span class="pill warn">${rows.filter(r=>r.prev!=null&&r.nota-r.prev<=-10).length} caíram 10+ pts no mês</span></div>
     <p class="note">Ordenado pelos pts que cada PDV tira da nota ${T[t]} do escopo (peso do canal × pontos perdidos). Nos primeiros da lista uma visita bem feita rende mais.</p>
     <div class="f" style="max-width:340px"><label for="cliQ">Buscar PDV ou nome</label><input type="search" id="cliQ" value="${esc(S.cliQ)}" placeholder="ex.: 1073159 ou supermercado"></div>
     <div class="tw"><table><thead><tr><th>PDV</th><th>Canal</th><th>Rota</th><th class="n">Nota</th><th class="n">Δ mês</th><th class="n">Pts na nota</th><th>Maiores perdas</th></tr></thead><tbody>
@@ -1423,7 +1428,9 @@ function renderADForm(el){
   let st=info&&VIS[pv]&&VIS[pv].st&&VIS[pv].form===sh?JSON.parse(JSON.stringify(VIS[pv].st)):adLoad2(key);
   if(!st){st={a:{},d:{},sk:{},res:'',obs:'',data:new Date().toISOString().slice(0,10),src:'',hit:0};if(info){const pf=adPrefill(pv,items);if(pf){st.a=pf.a;st.src=pf.src;st.hit=pf.hit;for(const x of items)if(st.a[x.id]>0)x.sku.forEach((_,i)=>st.sk['a|'+x.id+'|'+i]=1)}}}
   let tmr=null;const save=()=>{adSave2(key,st);if(info){clearTimeout(tmr);tmr=setTimeout(()=>visWrite(info,sh,st,adTot2(f,items,st)),1200)}};
-  const autoVisit=()=>{if(info&&!st.vis&&!st.visOff){st.vis=1;st.visTs=Date.now();const c=$('adVis');if(c){c.checked=true;$('adVisL').textContent='Visita registrada';$('adVisM').textContent=visMeta(st)}}};
+  const needRes=()=>{if(!info||String(st.res||'').trim())return true;const r=$('adRes');r.classList.add('err');$('adResMsg').hidden=false;r.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>r.focus(),300);toast('Preencha o Responsável antes de continuar.');return false};
+  const autoVisit=()=>{if(info&&!st.vis&&!st.visOff&&!String(st.res||'').trim()){$('adRes').classList.add('err');$('adResMsg').hidden=false;return}
+    if(info&&!st.vis&&!st.visOff){st.vis=1;st.visTs=Date.now();const c=$('adVis');if(c){c.checked=true;$('adVisL').textContent='Visita registrada';$('adVisM').textContent=visMeta(st)}}};
   const cs=info?D.cons[info.rota]:null;const b=info?BASEI[pv]:null;
   const ice=info?adLastRow(0,pv):null,red=info?adLastRow(1,pv):null;
   const two=(t)=>{const r=[];if(!info)return r;const pi=PIDX[pv];if(pi==null)return r;for(let m=LASTM;m>=4&&r.length<2;m--){const i=PDVROW[pi+'_'+t+'_'+m];if(i!=null)r.push(i)}return r};
@@ -1458,7 +1465,7 @@ function renderADForm(el){
     ${info?`<div class="visit noprint"><label class="sw2"><input type="checkbox" id="adVis"${st.vis?' checked':''}><span class="knob"></span></label><div><b id="adVisL">${st.vis?'Visita registrada':'Visita não registrada'}</b><div class="small" id="adVisM">${visMeta(st)}</div></div></div>`:''}
     <div class="score adsc" id="adTiles"></div>
     <div class="inline">
-      <div class="f"><label for="adRes">Responsável</label><input type="text" id="adRes" value="${esc(st.res||'')}" placeholder="Consultor ou repositor"></div>
+      <div class="f"><label for="adRes">Responsável${info?' <span class="req">*obrigatório</span>':''}</label><input type="text" id="adRes" value="${esc(st.res||'')}" placeholder="Nome de quem fez a visita"${info?' required aria-required="true"':''}><span class="small reqmsg" id="adResMsg" hidden>Preencha o Responsável para registrar a visita e baixar o PDF.</span></div>
       <div class="f"><label for="adData">Data</label><input type="date" id="adData" value="${esc(st.data||'')}"></div>
       <span class="small">${info?(st.src?`Antes preenchido com a pesquisa ${esc(st.src)} (${st.hit} de ${items.length} itens encontrados; os demais ficam para preencher na loja).`:'Cliente sem pesquisa RED: preencha o Antes na loja.'):''} Itens sem Depois mantêm o valor do Antes no resultado projetado. Nas combinadas, marcar todos os SKUs dá a pontuação cheia.</span>
     </div>
@@ -1467,6 +1474,7 @@ function renderADForm(el){
     ${f.nota?`<p class="small">${esc(f.nota)}</p>`:''}
     <div class="f"><label for="adObs">Estratégia combinada com o cliente</label><textarea id="adObs" rows="3" placeholder="O que foi acordado, prazos, materiais necessários">${esc(st.obs||'')}</textarea></div>
     <div class="sign"><div>Consultor</div><div>Supervisor</div><div>Cliente</div></div>
+    <div class="inline noprint adbot"><button class="btn pri" type="button" id="adPdf2">Baixar PDF</button><button class="btn" type="button" id="adPrint2">Imprimir</button><span class="small">Terminou o preenchimento? Baixe o PDF aqui mesmo.</span></div>
   </div>`;
   const upd=()=>{const T2=adTot2(f,items,st);T2.pil.forEach((o,pi)=>{$('adP'+pi).textContent=fmt(o.p,1);$('adA'+pi).textContent=fmt(o.a,1);$('adD'+pi).textContent=fmt(o.d,1)});
     $('adPT').textContent=fmt(T2.P,1);$('adAT').textContent=fmt(T2.A,1);$('adDT').textContent=fmt(T2.D,1);
@@ -1479,20 +1487,21 @@ function renderADForm(el){
   el.querySelectorAll('[data-tg]').forEach(btn=>btn.onclick=()=>{const[c,id]=btn.dataset.tg.split('|');const cur=st[c][id];setV(c,+id,(cur!=null&&cur!==''&&+cur>0)?0:1);if(c==='d')autoVisit();save();upd()});
   el.querySelectorAll('[data-sk]').forEach(ch=>ch.onchange=()=>{const k=ch.dataset.sk;if(ch.checked)st.sk[k]=1;else delete st.sk[k];const[c,id]=k.split('|');const x=items[+id];
     const all=x.sku.every((s,i)=>st.sk[c+'|'+id+'|'+i]);setV(c,+id,all?1:0);if(c==='d')autoVisit();save();upd()});
-  const vc=$('adVis');if(vc)vc.onchange=()=>{st.vis=vc.checked?1:0;st.visOff=vc.checked?0:1;if(vc.checked)st.visTs=Date.now();$('adVisL').textContent=vc.checked?'Visita registrada':'Visita não registrada';$('adVisM').textContent=visMeta(st);save()};
-  $('adRes').onchange=e=>{st.res=e.target.value;save()};$('adData').onchange=e=>{st.data=e.target.value;save()};$('adObs').onchange=e=>{st.obs=e.target.value;save()};
+  const vc=$('adVis');if(vc)vc.onchange=()=>{if(vc.checked&&!needRes()){vc.checked=false;return}st.vis=vc.checked?1:0;st.visOff=vc.checked?0:1;if(vc.checked)st.visTs=Date.now();$('adVisL').textContent=vc.checked?'Visita registrada':'Visita não registrada';$('adVisM').textContent=visMeta(st);save()};
+  $('adRes').oninput=e=>{if(e.target.value.trim()){e.target.classList.remove('err');$('adResMsg').hidden=true}};
+  $('adRes').onchange=e=>{st.res=e.target.value.trim();e.target.value=st.res;if(st.res&&Object.keys(st.d).length)autoVisit();save()};$('adData').onchange=e=>{st.data=e.target.value;save()};$('adObs').onchange=e=>{st.obs=e.target.value;save()};
   
   $('adBack').onclick=()=>{pushH();S.adPv='';S.adSh='';try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}render()};
   $('adClear').onclick=()=>{st.d={};for(const k in st.sk)if(k[0]==='d')delete st.sk[k];save();renderAD()};
   $('adCopyAD').onclick=()=>{st.d=Object.assign({},st.a);for(const k in st.sk)if(k[0]==='a')st.sk['d'+k.slice(1)]=1;save();renderAD()};
-  $('adPrint').onclick=()=>{document.body.dataset.print='ad';window.print()};
+  const doPrint=()=>{if(!needRes())return;document.body.dataset.print='ad';window.print()};$('adPrint').onclick=doPrint;$('adPrint2').onclick=doPrint;
   const cp=$('adCopy');if(cp)cp.onclick=async()=>{const u=adLink(pv);try{await navigator.clipboard.writeText(u);toast('Link copiado: '+u)}catch(e){window.prompt('Copie o link do cliente:',u)}};
-  $('adPdf').onclick=()=>adPDF2(f,items,st,info,adTot2(f,items,st),ice,red);
+  const doPdf=()=>{if(!needRes())return;adPDF2(f,items,st,info,adTot2(f,items,st),ice,red)};$('adPdf').onclick=doPdf;$('adPdf2').onclick=doPdf;
 }
 async function adPDF2(f,items,st,info,TT,ice,red){
   // no link publicado, salvar arquivo exige login com conta da organização; sem isso, cai para a impressão (Salvar como PDF)
   if(window.claude&&!DL){toast('Para baixar o PDF entre com a conta da organização (botão Entrar no topo). Abrindo a impressão: escolha "Salvar como PDF".');setTimeout(()=>{document.body.dataset.print='ad';window.print()},600);return}
-  const btn=$('adPdf');btn.disabled=true;btn.textContent='Gerando PDF…';
+  const btn={set disabled(v){['adPdf','adPdf2'].forEach(i=>{const b=$(i);if(b)b.disabled=v})},set textContent(v){['adPdf','adPdf2'].forEach(i=>{const b=$(i);if(b)b.textContent=v})}};btn.disabled=true;btn.textContent='Gerando PDF…';
   try{await loadScript(JSPDF);await loadScript(AUTOT)}catch(e){btn.disabled=false;btn.textContent='Baixar PDF';toast('Não foi possível carregar o gerador de PDF. Use Imprimir e escolha "Salvar como PDF".');return}
   try{
   const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});const W=210,M=10;const RED=[47,50,55],INK=[29,27,25],GR=[110,105,98],SUB=[239,237,233],TOT=[251,240,212];
