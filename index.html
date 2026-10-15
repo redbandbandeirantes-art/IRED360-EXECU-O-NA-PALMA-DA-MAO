@@ -99,7 +99,11 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--surface-2)}
 svg text{fill:var(--fg-3);font-family:var(--body);font-size:11px}
 .tt{position:fixed;pointer-events:none;background:var(--fg);color:var(--bg);font-size:12px;padding:6px 8px;border-radius:6px;z-index:50;max-width:260px}
 .kpiTag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-3)}
-.foot{margin-top:28px;font-size:12px;color:var(--fg-3);display:flex;flex-direction:column;gap:4px;max-width:90ch}
+.footrow{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin-top:28px;align-items:start}
+.footrow:has(#footAtk:not([hidden])){grid-template-columns:minmax(280px,5fr) minmax(0,7fr)}
+@media (max-width:900px){.footrow:has(#footAtk:not([hidden])){grid-template-columns:minmax(0,1fr)}}
+#footAtk{font-size:13px}#footAtk ol{margin:2px 0 6px;padding-left:20px}
+.foot{margin-top:0;font-size:12px;color:var(--fg-3);display:flex;flex-direction:column;gap:4px;max-width:90ch}
 .more{align-self:flex-start}
 .mini{display:flex;gap:3px}
 .mini b{display:inline-block;min-width:34px;text-align:center;font-size:11px;font-weight:700;border-radius:4px;padding:1px 3px}
@@ -242,6 +246,10 @@ input.err{border-color:var(--crit)!important;box-shadow:0 0 0 2px var(--crit-bg)
 .optog{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;user-select:none}
 .optog.off{opacity:.45;cursor:not-allowed}
 .optog input{width:16px;height:16px;accent-color:var(--crit)}
+:root{--obj:#1f8a4c;--prevm:#111111}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--obj:#5fd394;--prevm:#f2f2f2}}
+:root[data-theme="dark"]{--obj:#5fd394;--prevm:#f2f2f2}
+.dlg span{display:inline-flex;align-items:center;gap:5px}
 .wkbar{display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;margin-top:8px}
 .chip.now{border-color:var(--ice)}
 .nowtag{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--ice);color:#fff;border-radius:999px;padding:1px 6px;margin-left:2px}
@@ -400,7 +408,7 @@ input.err{border-color:var(--crit)!important;box-shadow:0 0 0 2px var(--crit-bg)
   <section id="tab-ad" hidden></section>
   <section id="tab-visitas" hidden></section>
 
-  <div class="foot">
+  <div class="footrow"><div id="footAtk" class="callout" hidden></div><div class="foot">
     <div><b>Como a nota é calculada.</b> Nota do canal = pontos realizados ÷ pontos possíveis de todos os PDVs pesquisados do canal. Nota do escopo = média dos canais ponderada pelo peso FDS (ICE e RED têm pesos próprios), renormalizada pelos canais presentes no escopo. A nota final da remuneração (média de ICE e RED) aparece só na aba Nota final.</div>
     <div><b>Pts na nota</b> = quanto a nota ponderada do escopo subiria se o item fosse 100% executado. Junta o peso do canal, o tamanho da perda e quantos PDVs falharam.</div>
     <div><b>Outubro (*)</b> é parcial: RED até 14/10 (1.610 PDVs) e ICE LATAM até 14/10 (475 PDVs), arquivos iRED360 de 15/10/2026.</div>
@@ -408,7 +416,7 @@ input.err{border-color:var(--crit)!important;box-shadow:0 0 0 2px var(--crit-bg)
     <div><b>Estrutura comercial:</b> todas as pesquisas (abr–out) aparecem na gerência, supervisão e rota atuais de cada cliente, tiradas do arquivo mais recente: pesquisas de outubro (iRED360 de 09/10 e ICE de outubro) e, para quem ainda não foi pesquisado em outubro, a base de pesquisa de outubro; depois a base RED de outubro; na falta delas, a última pesquisa do cliente. Consultor, supervisor e gerente vêm da Estrutura Comercial Infocom; repositor e líder de merchandising, da Base Repositores (arquivo 10-PESQUISA BASE BAND CLIENTES OUTUBRO-26).</div>
     <div>Fontes: iRED360 RED abr–out/2026; ICE LATAM abr–ago (pesquisa Dimensiva), set fechado (iRED360 ICE LATAM de 07/10) e out (iRED360 ICE LATAM de 15/10); RED de set fechado (iRED360 RED de 07/10); PESO FDS RED_ICE; Estudos GC (base e prioridades de outubro, objetivos, ICE jan–abr/2025); 10-PESQUISAS BASE BAND DIMENSIVA OUTUBRO-26 (status da pesquisa, ICE jan–mar/2026, cadastro e geolocalização); 10-PESQUISA BASE BAND CLIENTES OUTUBRO-26 (base RED, estrutura comercial, repositores e geolocalização). Pesos RED: ADEGAS 1,4 e CONVENIÊNCIA 1,0, conforme a planilha de pesos. Notas sem ajustes de auditoria.</div>
     <div>Antes e Depois: formulário oficial Band 2026 V2. Aberto pelo link do Claude, o formulário e a visita de cada cliente ficam gravados e aparecem para todos; hospedado em outro endereço, ficam salvos no aparelho de quem preencheu e podem ser enviados pelo botão Exportar visitas (aba Visitas).</div>
-  </div>
+  </div></div>
 </div>
 <div class="tt" id="tt" hidden></div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -850,6 +858,9 @@ const S={t:0,mes:LASTM,rN:10,visDim:'',adPv:'',adSh:'',adT:0,adQ:'',adRes:'',adO
   topDim:'ger',finDim:'ger',finSort:'f',finDir:-1,
   oP2:false,oShow:'pend',oDia:'',oHist:'ultima',oSem:'red',oFixo:70,o25:false,o1T:true,oQ:'',oN:150,ov:{}};
 try{localStorage.removeItem('r360tab')}catch(e){} // sempre abre na Visão Geral
+try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
+window.addEventListener('pageshow',e=>{window.scrollTo(0,0);if(e.persisted&&!/^#ad=/.test(location.hash)){S.tab='geral';render()}});
+window.addEventListener('beforeunload',()=>{window.scrollTo(0,0)});
 
 const fmt=(v,d=1)=>v==null||isNaN(v)?'–':v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -947,6 +958,31 @@ function drill(dim,k){pushH();if(dim==='ger')S.ger=k;else if(dim==='sup'){S.sup=
 const tt=$('tt');
 document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-tt]');if(!t){tt.hidden=true;return}tt.innerHTML=t.getAttribute('data-tt');tt.hidden=false;tt.style.left=Math.min(e.clientX+12,innerWidth-270)+'px';tt.style.top=(e.clientY+14)+'px'});
 
+const dLeg=(k,c)=>`<span><svg width="22" height="12" aria-hidden="true">${k==='bar'?`<rect x="6" y="1" width="10" height="10" rx="2" fill="${c}" opacity=".22"/>`:`<line x1="1" x2="21" y1="6" y2="6" stroke="${c}" stroke-width="${k==='line'?3:2}" ${k==='dash'?'stroke-dasharray="7 3"':k==='dash2'?'stroke-dasharray="4 3"':''}/>`}</svg>`;
+// nota acumulada dia a dia no mês (linha) + PDVs pesquisados no dia (barras)
+function dailySVG(t,m,cls,obj,prevScore){
+  const dn=i=>{const d=PM.d[i];return d?parseInt(String(d).slice(0,2),10):null};
+  const rows=rowsOf(t,m).filter(inScope);const days=[...new Set(rows.map(dn).filter(x=>x))].sort((a,b)=>a-b);
+  if(!days.length)return'<p class="note">Sem pesquisas no escopo neste mês.</p>';
+  const cnt={};rows.forEach(i=>{const d=dn(i);cnt[d]=(cnt[d]||0)+1});
+  const pts=days.map(d=>{const a=agg(t,m,i=>inScope(i)&&dn(i)<=d);const o=agg(t,m,i=>inScope(i)&&dn(i)===d);return{d,v:a.score,n:cnt[d],acc:a.n,dv:o.score}});
+  const w=640,h=240,ml=34,mr=78,mt=14,mb=26;const vals=pts.map(p=>p.v).filter(v=>v!=null).concat([obj,prevScore].filter(v=>v!=null));
+  let lo=Math.floor(Math.min(...vals)/5)*5-5,hi=Math.min(100,Math.ceil(Math.max(...vals)/5)*5);if(hi-lo<10)lo=hi-10;
+  const nx=pts.length,bw=Math.max(4,Math.min(22,(w-ml-mr)/nx*0.6));const x=k=>nx===1?(ml+w-mr)/2:ml+k*(w-ml-mr)/(nx-1);const y=v=>mt+(hi-v)*(h-mt-mb)/(hi-lo);
+  const mxN=Math.max(...pts.map(p=>p.n)),bh=(h-mt-mb)*0.32;const mm=String(m).padStart(2,'0');const MC=`var(--${cls})`;
+  let g='';for(let v=lo;v<=hi;v+=5)g+=`<line x1="${ml}" x2="${w-mr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width=".6"/><text x="${ml-6}" y="${y(v)+4}" text-anchor="end" style="fill:var(--fg-3);font-size:10px">${v}</text>`;
+  pts.forEach((p,k)=>{const hh=Math.max(2,p.n/mxN*bh);g+=`<rect x="${x(k)-bw/2}" y="${h-mb-hh}" width="${bw}" height="${hh}" rx="2" fill="${MC}" opacity=".16"/>`;if(nx<=16)g+=`<text x="${x(k)}" y="${h-mb-hh-3}" text-anchor="middle" style="fill:${MC};font-size:9.5px;font-weight:600;opacity:.8">${p.n}</text>`});
+  const step=Math.ceil(nx/12);pts.forEach((p,k)=>{if(k%step===0||k===nx-1)g+=`<text x="${x(k)}" y="${h-8}" text-anchor="middle" style="fill:var(--fg-3);font-size:10px">${String(p.d).padStart(2,'0')}/${mm}</text>`});
+  const hl=(v,c,dash,cap)=>v==null?'':`<line x1="${ml}" x2="${w-mr}" y1="${y(v)}" y2="${y(v)}" stroke="${c}" stroke-width="1.8" stroke-dasharray="${dash}"${cap?' stroke-linecap="round"':''}/>`;
+  g+=hl(obj,'var(--obj)','7 4');g+=hl(prevScore,'var(--prevm)','4 3');
+  let d='';pts.forEach((p,k)=>{if(p.v!=null)d+=(d?'L':'M')+x(k)+' '+y(p.v)});g+=`<path d="${d}" fill="none" stroke="${MC}" stroke-width="2.8" stroke-linejoin="round"/>`;
+  pts.forEach((p,k)=>{if(p.v==null)return;g+=`<circle cx="${x(k)}" cy="${y(p.v)}" r="${k===nx-1?4.5:3}" fill="${MC}"/>`});
+  const lv=pts[nx-1].v;const labs=[];if(lv!=null)labs.push({v:lv,t:fmt(lv,2),c:'var(--fg)',b:1});if(obj!=null)labs.push({v:obj,t:'Obj. '+fmt(obj,1),c:'var(--obj)'});if(prevScore!=null&&prevM(m)!=null)labs.push({v:prevScore,t:MESN[prevM(m)]+' '+fmt(prevScore,1),c:'var(--prevm)'});
+  labs.forEach(l=>l.y=y(l.v)+4);labs.sort((a,b)=>a.y-b.y);for(let k=1;k<labs.length;k++)if(labs[k].y-labs[k-1].y<13)labs[k].y=labs[k-1].y+13;
+  labs.forEach(l=>g+=`<text x="${w-mr+8}" y="${l.y}" style="fill:${l.c};font-size:11px;font-weight:${l.b?700:600}">${l.t}</text>`);
+  pts.forEach((p,k)=>{const x0=nx===1?ml:(k===0?ml:(x(k-1)+x(k))/2),x1=nx===1?w-mr:(k===nx-1?w-mr:(x(k)+x(k+1))/2);g+=`<rect x="${x0}" y="${mt}" width="${x1-x0}" height="${h-mt-mb}" fill="transparent" data-tt="<b>${String(p.d).padStart(2,'0')}/${mm}</b><br>Nota acumulada: <b>${fmt(p.v,2)}</b> (${p.acc} PDVs)<br>Pesquisados no dia: ${p.n}${p.dv!=null?' · nota do dia '+fmt(p.dv,1):''}"/>`});
+  const f=pts[0],l=pts[nx-1];
+  return`<svg class="trend" viewBox="0 0 ${w} ${h}" role="img" aria-label="Nota ${T[t]} acumulada por dia">${g}</svg><p class="small">Linha: nota ${T[t]} acumulada do mês até cada dia. Barras: PDVs pesquisados no dia. Do primeiro ao último dia: ${fmt(f.v,2)} → <b>${fmt(l.v,2)}</b> (${l.v!=null&&f.v!=null?(l.v>=f.v?'<span class="up">+':'<span class="dn">')+fmt(l.v-f.v,2)+'</span>':'–'}). Passe o mouse ou toque nos dias para ver o detalhe.</p>`}
 function trendSVG(series){
   const w=640,h=240,ml=34,mr=48,mt=14,mb=26,ms=D.meses;
   const all=series.flatMap(s=>s.v.filter(v=>v!=null));let lo=Math.floor(Math.min(...all,70)/5)*5,hi=Math.min(100,Math.ceil(Math.max(...all,80)/5)*5);
@@ -983,12 +1019,9 @@ function renderGeral(){
       <header><h3>Evolução ${TN[t]} · ${esc(scopeName())}</h3><div class="legend"><span><i class="sw" style="background:var(--${cls})"></i>${T[t]}</span>${t===0?'<span><i class="sw" style="background:var(--fg-3)"></i>Objetivo (tracejado)</span>':''}</div></header>
       ${trendSVG([{n:T[t],c:`var(--${cls})`,v:tr.map(x=>x[0])}].concat(t===0?[{n:'Objetivo',c:'var(--fg-3)',dash:1,v:tr.map(x=>x[1])}]:[]))}
     </div>
-    <div class="callout">
-      <div class="eyebrow">Onde atacar em ${MESN[m]} · ${esc(scopeName())}</div>
-      <div><b>Canais que mais tiram nota</b></div>
-      <ol>${rowsC.slice(0,3).map(x=>`<li><b>${x.c}</b> — nota ${fmt(x.o.pct)}, peso ${fmt(x.o.w,2)}: <b>${fmt(x.o.perda,2)} pts</b></li>`).join('')||'<li>Sem pesquisa no escopo</li>'}</ol>
-      <div><b>Métricas que mais pesam</b></div>
-      <ol>${top.map(([q,r])=>`<li>${esc(qCode(D.q[q]))} ${esc(qDesc(D.q[q]).slice(0,80))} <span class="small">· ${r.n} PDVs · ${fmt(r.imp,2)} pts</span></li>`).join('')||'<li>–</li>'}</ol>
+    <div class="panel">
+      <header><h3>Nota dia a dia · ${MESN[m]} · ${esc(scopeName())}</h3><div class="legend dlg">${dLeg('line',`var(--${cls})`)}${T[t]} acumulado</span>${dLeg('bar',`var(--${cls})`)}PDVs no dia</span>${t===0&&obj!=null?dLeg('dash','var(--obj)')+'Objetivo</span>':''}${Ap&&Ap.score!=null?dLeg('dash2','var(--prevm)')+MESN[pm]+' fechado</span>':''}</div></header>
+      ${dailySVG(t,m,cls,obj,Ap&&Ap.score)}
     </div>
   </div>
   <div class="panel" style="margin-top:16px">
@@ -1006,6 +1039,11 @@ function renderGeral(){
     <div class="tw"><table><thead><tr><th>Pilar</th><th class="n">% atendido</th><th>Pts na nota</th></tr></thead><tbody>${K.map((k,i)=>`<tr><td><b>${KN[k]}</b></td><td class="n">${pi[i].p?fmt(pi[i].r/pi[i].p*100):'–'}</td><td style="min-width:200px">${bar(pi[i].imp,mxp,cls)}</td></tr>`).join('')}</tbody></table></div>
     <p class="note">O % do pilar pode passar de 100 quando há pontos bônus. Os pts na nota consideram só a perda.</p>
   </div>`;
+  {const fa=$('footAtk');if(fa){fa.innerHTML=`<div class="eyebrow">Onde atacar em ${MESN[m]} · ${esc(scopeName())}</div>
+      <div><b>Canais que mais tiram nota</b></div>
+      <ol>${rowsC.slice(0,3).map(x=>`<li><b>${x.c}</b> — nota ${fmt(x.o.pct)}, peso ${fmt(x.o.w,2)}: <b>${fmt(x.o.perda,2)} pts</b></li>`).join('')||'<li>Sem pesquisa no escopo</li>'}</ol>
+      <div><b>Métricas que mais pesam</b></div>
+      <ol>${top.map(([q,r])=>`<li>${esc(qCode(D.q[q]))} ${esc(qDesc(D.q[q]).slice(0,80))} <span class="small">· ${r.n} PDVs · ${fmt(r.imp,2)} pts</span></li>`).join('')||'<li>–</li>'}</ol>`;fa.hidden=false}}
   document.querySelectorAll('[data-dcanal]').forEach(r=>r.onclick=()=>drill('canal',r.dataset.dcanal));
   const ga=$('gAll');if(ga)ga.onclick=()=>{pushH();S.canal='';buildFilters();render()};
 }
@@ -1661,6 +1699,7 @@ function renderVisitas(){
 }
 
 function render(nav){
+  {const fa=$('footAtk');if(fa&&S.tab!=='geral')fa.hidden=true}
   if(S.tab==='outubro'&&S.t!==0){S.t=0;$('tICE').setAttribute('aria-pressed',true);$('tRED').setAttribute('aria-pressed',false)}
   renderCrumbs();
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===S.tab));{const at=document.querySelector('.tab[aria-selected=true]');if(at&&innerWidth<=640)at.parentElement.scrollLeft=at.offsetLeft-60}
