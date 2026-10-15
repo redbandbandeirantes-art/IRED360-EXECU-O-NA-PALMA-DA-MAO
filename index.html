@@ -849,7 +849,7 @@ const qDesc=s=>{const i=s.indexOf(' - ');return i>0&&i<16?s.slice(i+3):s};
 const S={t:0,mes:LASTM,rN:10,visDim:'',adPv:'',adSh:'',adT:0,adQ:'',adRes:'',adObs:'',adData:'',ger:'',sup:'',rota:'',canal:'',tab:'geral',kpiM:'',showAllM:false,cliN:150,cliQ:'',rankSort:'s',rankDir:-1,
   topDim:'ger',finDim:'ger',finSort:'f',finDir:-1,
   oP2:false,oShow:'pend',oDia:'',oHist:'ultima',oSem:'red',oFixo:70,o25:false,o1T:true,oQ:'',oN:150,ov:{}};
-try{const t=localStorage.getItem('r360tab');if(t&&document.querySelector(`[data-tab="${t}"]`))S.tab=t}catch(e){}
+try{localStorage.removeItem('r360tab')}catch(e){} // sempre abre na Visão Geral
 
 const fmt=(v,d=1)=>v==null||isNaN(v)?'–':v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -919,7 +919,7 @@ $('fSup').onchange=e=>{pushH();S.sup=e.target.value;S.rota='';if(S.sup){const r=
 $('fRota').onchange=e=>{pushH();const pr=parseRota(e.target.value);S.rota=e.target.value?pr.rota:'';if(pr.sup)S.sup=pr.sup;if(S.rota){const r=RK.find(r=>r.rota===S.rota&&(!S.sup||r.sup===S.sup));if(r){S.ger=r.ger;S.sup=r.sup}}buildFilters();render()};
 $('fCanal').onchange=e=>{pushH();S.canal=e.target.value;render()};
 $('fClear').onclick=()=>{pushH();S.ger=S.sup=S.rota=S.canal='';buildFilters();render()};
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{if(S.tab===b.dataset.tab)return;pushH();S.tab=b.dataset.tab;try{localStorage.setItem('r360tab',S.tab)}catch(e){}render()});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{if(S.tab===b.dataset.tab)return;pushH();S.tab=b.dataset.tab;render()});
 const bandA=(t,m)=>agg(t,m,i=>S.canal===''||PM.c[i]==+S.canal);
 const isBand=()=>!S.ger&&!S.sup&&!S.rota;
 function bandNote(t,m){const B=bandA(t,m);if(isBand())return`<span class="bandref">BAND ${T[t]} ${MESN[m]}: <b>${fmt(B.score,2)}</b></span>`;const A=scope(t,m);return`<span class="bandref">BAND ${T[t]} ${MESN[m]}: <b>${fmt(B.score,2)}</b> · ${esc(scopeName())} ${fmt(A.score,2)} ${A.score!=null&&B.score!=null?'('+(A.score-B.score>=0?'+':'')+fmt(A.score-B.score,2)+')':''}</span>`}
